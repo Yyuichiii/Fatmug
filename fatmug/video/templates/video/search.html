@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Videos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 100%;
+            max-width: 800px;
+            margin-top: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 20px;
+        }
+        .nav-buttons a {
+            text-decoration: none;
+            color: #007BFF;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .nav-buttons a:hover {
+            text-decoration: underline;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        input[type="text"] {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            width: 100%;
+        }
+        button {
+            background-color: #007BFF;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .video-item {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .video-item h2 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-buttons">
+            <a href="{% url 'index' %}">Home</a>
+            <a href="{% url 'upload_video' %}">Upload Video</a>
+        </div>
+        <h1>Search Videos</h1>
+        <form method="get" action="">
+            <div class="form-group">
+                <label for="query">Search by Title or Metadata:</label>
+                <input type="text" id="query" name="query" placeholder="Enter search term..." required>
+            </div>
+            <button type="submit">Search</button>
+        </form>
+        <div class="results">
+            {% if videos %}
+                {% for video in videos %}
+                    <div class="video-item">
+                        <h2>{{ video.title }}</h2>
+                        <p>{{ video.metadata }}</p>
+                        <a href="{{ video.url }}" target="_blank">Watch Video</a>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No videos found matching your criteria.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
