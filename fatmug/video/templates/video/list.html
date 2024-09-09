@@ -55,6 +55,21 @@
             background-color: #007BFF;
             color: #fff;
         }
+        .refresh-button {
+            text-decoration: none;
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        .refresh-button:hover {
+            background-color: #0056b3;
+        }
         .video-list {
             list-style-type: none;
             padding: 0;
@@ -115,6 +130,11 @@
         .status-completed {
             color: #28a745; 
         }
+        .upload-time {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -130,6 +150,7 @@
             <a href="{% url 'index' %}">Home</a>
             <a href="{% url 'upload_video' %}">Upload Video</a>
         </div>
+        <a class="refresh-button" href="{% url 'list_videos' %}">Refresh</a>
         <h1>Video List</h1>
         <ul class="video-list">
             {% for video in videos %}
@@ -138,10 +159,9 @@
                 <div>
                     <h2>{{ video.video.name }}</h2>
                     <p>Status: <span class="{% if video.status == 'pending' %}status-pending{% else %}status-completed{% endif %}">{{ video.get_status_display }}</span></p>
+                    <p class="upload-time">Uploaded on: {{ video.uploaded_at|date:"F j, Y, g:i a" }}</p>
                 </div>
-
                 {% if video.status == 'completed' %}
-                    <!-- Play button shown only when the status is completed -->
                     <a class="play-button" href="{{ video.video.url }}" target="_blank">Play Video</a>
                 {% endif %}
             </li>
