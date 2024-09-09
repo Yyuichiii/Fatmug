@@ -83,7 +83,7 @@
             <a href="javascript:history.back()">Back</a>
         </div>
         <h1>Upload Video</h1>
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" action="{% url 'upload_video' %}">
             {% csrf_token %}
             <div class="form-group">
                 <label for="video">Select Video File:</label>
