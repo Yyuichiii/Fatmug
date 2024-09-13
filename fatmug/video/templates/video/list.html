@@ -162,7 +162,8 @@
                     <p class="upload-time">Uploaded on: {{ video.uploaded_at|date:"F j, Y, g:i a" }}</p>
                 </div>
                 {% if video.status == 'completed' %}
-                    <a class="play-button" href="{{ video.video.url }}" target="_blank">Play Video</a>
+                <a class="play-button" href="{% url 'play_video' video.pk %}" target="_blank">Play Video</a>
+             
                 {% endif %}
             </li>
             {% empty %}

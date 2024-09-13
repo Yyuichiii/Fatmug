@@ -83,7 +83,7 @@
             <a href="javascript:history.back()">Back</a>
         </div>
         <h1>Upload Video</h1>
-        <form method="post" enctype="multipart/form-data" action="{% url 'upload_video' %}">
+        <form method="post" enctype="multipart/form-data" action="{% url 'upload_video' %}" id="videoUploadForm">
             {% csrf_token %}
             <div class="form-group">
                 <label for="video">Select Video File:</label>
@@ -93,4 +93,33 @@
         </form>
     </div>
 </body>
+
+<script>
+    document.getElementById('videoUploadForm').addEventListener('submit', function(event) {
+        const videoInput = document.getElementById('video');
+        const file = videoInput.files[0];
+        
+        if (file) {
+            // Check MIME type to ensure it's a video
+            if (!file.type.startsWith('video/')) {
+                alert("Please upload a valid video file.");
+                event.preventDefault();  // Prevent form submission
+                return;
+            }
+
+            // Optional: Check file extension to ensure it's a valid video extension
+            const validExtensions = ['mp4', 'webm'];
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+
+            if (!validExtensions.includes(fileExtension)) {
+                alert("The file type is not allowed. Please upload a valid video format.");
+                event.preventDefault();
+                return;
+            }
+        } else {
+            alert("No file selected.");
+            event.preventDefault();
+        }
+    });
+</script>
 </html>
