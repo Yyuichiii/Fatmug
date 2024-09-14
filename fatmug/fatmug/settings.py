@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'fatmug.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "HOST": "localhost",
+        "HOST": "db",
         "NAME": "Fatmug",
         "USER": "fatmug",
         "PORT": 5432,
@@ -138,7 +138,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'Uploaded_Videos')
 
 # Celery Configuration
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = 'redis://redis:6379/0'
 CELERY_ACCEPT_CONTENT = ['json'] 
 CELERY_TASK_SERIALIZER = 'json' 
 CELERY_RESULT_SERIALIZER = 'json'

@@ -36,6 +36,7 @@ def video_extraction_process(pk):
     subtitle_streams = result.stdout.strip().split('\n')
 
 
+
     if not subtitle_streams or all(item == '' for item in subtitle_streams):
         upload.status = StatusChoice.COMPLETED
         upload.save()

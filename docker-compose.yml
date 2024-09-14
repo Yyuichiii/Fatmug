@@ -1,9 +1,8 @@
-version: '3.9'
 
 services:
   web:
     build: .
-    command: python fatmug/manage.py runserver 0.0.0.0:8000
+    command: /app/entrypoint.sh
     volumes:
       - .:/app
     ports:
@@ -11,7 +10,6 @@ services:
     depends_on:
       - db
       - redis
-    working_dir: /app/fatmug
 
   db:
     image: postgres:13
@@ -24,15 +22,20 @@ services:
 
   redis:
     image: redis:latest
+    ports:
+      - "6379:6379"
 
   celery:
     build: .
-    command: cd fatmug/celery -A fatmug worker --loglevel=info
+    command: celery -A fatmug worker --loglevel=INFO
+    working_dir: /app/fatmug 
     volumes:
       - .:/app
     depends_on:
+      - db
       - redis
-    working_dir: /app/fatmug
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
 
 volumes:
   postgres_data:
