@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+  web:
+    build: .
+    command: python fatmug/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    working_dir: /app/fatmug
+
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: Fatmug
+      POSTGRES_USER: fatmug
+      POSTGRES_PASSWORD: fatmug
+
+  redis:
+    image: redis:latest
+
+  celery:
+    build: .
+    command: cd fatmug/celery -A fatmug worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+    working_dir: /app/fatmug
+
+volumes:
+  postgres_data:
