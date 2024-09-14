@@ -64,12 +64,16 @@
         }
   
     </style>
+   
+    
 </head>
 <body>
     <h1>Video Player</h1>
     
     <video id="videoPlayer" controls autoplay>
-        <source src="{{ video.video.url }}" type="video/mp4">
+        
+        <source src="{% url 'serve_video' video.id %}" type="video/mp4">
+      
     
         {% if subtitles %}
             {% for subtitle in subtitles %}
@@ -96,16 +100,87 @@
         <li><a href="{% url 'search' %}">Search</a></li>
     </ul>
 
-   
-
+    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const video = document.getElementById('videoPlayer');
             const subtitleTracks = video.textTracks;
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedLanguage = urlParams.get('language');
+            const starttime = urlParams.get('start_time');
 
-            if (subtitleTracks.length > 0) {
-                subtitleTracks[0].mode = 'showing';
+            function parseTimeString(timeString) {
+                const timeRegex = /(\d+h)?(\d+m)?(\d+\.\d+s|\d+s)?/;
+                const matches = timeString.match(timeRegex);
+            
+                if (!matches) {
+                    return 0; // Return 0 if no matches, default to start of the video
+                }
+            
+                let totalSeconds = 0;
+            
+                // Extract hours, minutes, and seconds
+                const hours = matches[1] ? parseInt(matches[1]) * 3600 : 0;
+                const minutes = matches[2] ? parseInt(matches[2]) * 60 : 0;
+                const seconds = matches[3] ? parseFloat(matches[3]) : 0;
+            
+                totalSeconds = hours + minutes + seconds;
+
+                
+            
+                return totalSeconds;
             }
+
+            if (starttime) {
+                const startTimeInSeconds = parseTimeString(starttime);
+            
+                // Wait until the video metadata is loaded to set the start time
+                video.addEventListener('loadedmetadata', function() {
+                    video.currentTime = startTimeInSeconds;
+                    video.controls = true;
+                    
+                });
+            }
+            
+            
+            if (selectedLanguage) {
+                
+                
+                let selectedTrackIndex = null;
+                
+    
+                for (let i = 0; i < subtitleTracks.length; i++) {
+                    
+                    if (subtitleTracks[i].label.toLowerCase() === selectedLanguage.toLowerCase()) {
+                        selectedTrackIndex = i;
+                        
+                        break;
+                    }
+
+
+                }
+                
+                if (selectedTrackIndex !== null) {
+                    subtitleTracks[selectedTrackIndex].mode = 'showing';
+                    document.getElementById('subtitleSelect').value = selectedTrackIndex;
+                }
+                else{
+                    if (subtitleTracks.length > 0) {
+                        subtitleTracks[0].mode = 'showing';
+                    }
+                }
+               
+            } 
+            else{
+                
+                if (subtitleTracks.length > 0) {
+                    subtitleTracks[0].mode = 'showing';
+                }
+            }
+
+        
+            
+        
         });
 
 
@@ -113,12 +188,15 @@
             const video = document.getElementById('videoPlayer');
             const selectedTrackIndex = document.getElementById('subtitleSelect').value;
             const subtitleTracks = video.textTracks;
+           
 
             for (let i = 0; i < subtitleTracks.length; i++) {
                 subtitleTracks[i].mode = i == selectedTrackIndex ? 'showing' : 'hidden';
             }
         }
-      
+
+        
     </script>
+   
 </body>
 </html>

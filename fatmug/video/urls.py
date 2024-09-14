@@ -8,4 +8,5 @@ urlpatterns = [
     path('search', views.search,name="search"),        
     path('play_video/<int:id>', views.play_video,name="play_video"),     
     path('subtitle/<int:file_id>/', views.serve_subtitle, name='serve_subtitle'),   
+    path('video/serve/<int:id>/', views.serve_video, name='serve_video'),
 ]

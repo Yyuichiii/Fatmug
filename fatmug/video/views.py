@@ -1,9 +1,10 @@
 from django.shortcuts import render,redirect
-from django.http import HttpResponse,FileResponse
-from .models import UploadedVideo,SubtitleFile
+from django.http import FileResponse,JsonResponse
+from .models import UploadedVideo,SubtitleFile,Subtitle
 from .tasks import video_extraction_process
 from django.contrib import messages
-
+from django.urls import reverse
+from urllib.parse import urlencode
 
 def index(request):
     return render(request,"video/index.html")
@@ -28,9 +29,51 @@ def list_videos(request):
     return render(request,"video/list.html",context={"videos":videos})
 
 
-def search(request):
-    return render(request,"video/search.html")
 
+def format_duration(duration):
+
+    total_seconds = int(duration.total_seconds())
+    hours, remainder = divmod(total_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    milliseconds = duration.microseconds / 1000  
+
+    if hours > 0:
+        formatted_time = f"{hours}h{minutes}m{seconds}.{int(milliseconds)}s"
+    else:
+        formatted_time = f"{minutes}m{seconds}.{int(milliseconds)}s"
+
+    return formatted_time
+
+def search(request):
+
+    if request.method == "POST":
+        query = request.POST.get('query')
+        if query:
+
+            results = Subtitle.objects.filter(text__icontains=query)
+
+            videos = []
+            for subtitle in results:
+                base_url = reverse('play_video', args=[subtitle.video.pk])
+                start_time = format_duration(subtitle.start_time)
+                language = subtitle.language
+                query_params = {
+                    'start_time': start_time,
+                    'language': language,
+                    }
+                full_url = f"{base_url}?{urlencode(query_params)}"
+                videos.append({
+                    'title': subtitle.video.video.name,
+                    'language': language,
+                    'start_time': start_time,
+                    'text': subtitle.text,
+                    'url': full_url
+                })
+
+            return JsonResponse({'videos': videos})
+
+
+    return render(request,"video/search.html")
 
 def play_video(request, id):
     video = UploadedVideo.objects.get(pk=id)
@@ -56,3 +99,18 @@ def serve_subtitle(request, file_id):
     response = FileResponse(open(file_path, 'rb'), content_type='text/vtt')
     response['Content-Disposition'] = f'inline; filename="{subtitle.file.name}"'
     return response
+
+
+def serve_video(request, id):
+    video = UploadedVideo.objects.get(pk=id)
+    response = FileResponse(open(video.video.path, 'rb'), content_type='video/mp4')
+    response['Accept-Ranges'] = 'bytes'
+    return response
+
+
+
+
+
+
+# ffmpeg -i test1.mp4 -c:v libx264 -c:a aac -b:v 1000k -b:a 128k -movflags +faststart -y output-seekable.mp4
+# ffprobe output-seekable.mp4
