@@ -79,4 +79,5 @@ On the "Search" page, you can search for words or sentences. The backend searche
 
 A video demonstration of the entire project is available here:
 
-[Fatmug VideoCast](Screenshost/Fatmug%20VideoCast.webm)
+[Fatmug VideoCast](Screenshots/Fatmug VideoCast.webm)
+
