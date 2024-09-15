@@ -28,7 +28,7 @@ To create a superuser, run:
 docker-compose exec web python /app/fatmug/manage.py createsuperuser
 ```
 
-### Project Overview
+## Project Overview
 
 Once the server is running, you will see the home page with three options to navigate:
 
@@ -79,5 +79,5 @@ On the "Search" page, you can search for words or sentences. The backend searche
 
 A video demonstration of the entire project is available here:
 
-[Fatmug VideoCast](Fatmug_VideoCast.webm)
+[Fatmug VideoCast](Screenshots/Fatmug_VideoCast.webm)
 
